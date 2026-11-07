@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>covermagic // developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #121214; --panel: #18181b; --text: #e4e4e7; --text-muted: #71717a; --accent: #94a3b8; --border: #27272a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, crosshair; }
+        p, span, h1, h2, h3, div, input, textarea, a { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, auto; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; }
+        #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.15; }
+        a { color: var(--accent); text-decoration: none; transition: color 0.3s; }
+        a:hover { color: #fff; }
+        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
+        header { padding: 60px 0 40px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 60px; }
+        .avatar { width: 85px; height: 85px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); background: var(--panel); padding: 2px; }
+        .header-info h1 { font-size: 1.8rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+        .header-info p { font-size: 0.9rem; color: var(--text-muted); }
+        section { margin-bottom: 60px; }
+        .section-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; }
+        .section-title::before { content: ''; display: inline-block; width: 15px; height: 1px; background: var(--accent); margin-right: 10px; }
+        .terminal { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); height: 250px; overflow-y: auto; }
+        .term-header { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .term-header span { width: 8px; height: 8px; border-radius: 50%; background: #3f3f46; }
+        #terminal-output { margin-bottom: 10px; }
+        .term-line { margin-bottom: 5px; }
+        .term-user { color: var(--accent); }
+        .input-line { display: flex; align-items: center; }
+        .input-line span { color: var(--accent); margin-right: 10px; }
+        #terminal-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; width: 100%; outline: none; }
+        .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .skill { background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; transition: all 0.3s; color: var(--text); display: block; }
+        .skill:hover { border-color: var(--accent); color: #fff; background: #202024; }
+        .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
+        .project-card:hover { border-color: #3f3f46; }
+        .project-title { font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .project-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
+        .btn { display: inline-block; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 16px; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; text-decoration: none; }
+        .btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .btn-accent { border-color: var(--accent); color: var(--accent); }
+        .btn-accent:hover { background: var(--accent); color: var(--bg); }
+        .log-box { background: #0a0a0b; border: 1px solid var(--border); border-radius: 6px; height: 200px; overflow-y: auto; padding: 15px; font-size: 0.85rem; margin-bottom: 15px; }
+        .log-entry { margin-bottom: 8px; border-bottom: 1px dashed #222; padding-bottom: 8px; }
+        .log-time { color: var(--text-muted); }
+        .log-name { color: #fff; font-weight: 700; }
+        .log-text { color: var(--accent); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: center; }
+        .modal-box { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; }
+        .modal-box h3 { margin-bottom: 20px; font-size: 1.1rem; }
+        input, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 12px; color: #fff; font-family: inherit; margin-bottom: 15px; border-radius: 4px; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--accent); }
+        textarea { resize: vertical; height: 100px; }
+        footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 80px; }
+        footer a { margin: 0 10px; }
+        .scramble-char { color: var(--accent); opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/85/18181b/94a3b8?text=CM'">
+            <div class="header-info">
+                <h1 id="header-name">covermagic</h1>
+                <p>Cybersecurity & OSINT Specialist</p>
+            </div>
+        </header>
+
+        <section>
+            <div class="terminal" id="term-window" onclick="document.getElementById('terminal-input').focus()">
+                <div class="term-header"><span></span><span></span><span></span></div>
+                <div id="terminal-output">
+                    <div class="term-line"><span class="term-user">guest@covermagic:~$</span> ./init.sh</div>
+                    <div class="term-line" style="color: var(--text-muted); font-style: italic;">Initializing secure connection...</div>
+                    <div class="term-line" style="color: var(--text-muted); font-style: italic; margin-bottom: 15px;">Type 'help' for available commands.</div>
+                </div>
+                <div class="input-line">
+                    <span>guest@covermagic:~$</span>
+                    <input type="text" id="terminal-input" autocomplete="off" autofocus>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">Hard Skills // Knowledge Base</div>
+            <div class="skills-grid">
+                <a href="https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170" target="_blank" class="skill">C++ / System Architecture</a>
+                <a href="https://www.gnu.org/software/bash/manual/html_node/Basic-Shell-Features.html" target="_blank" class="skill">Bash / Linux</a>
+                <a href="https://academy.cyberyozh.com/blog?category=osint" target="_blank" class="skill">OSINT / GEOINT / HUMINT</a>
+                <a href="https://practicum.yandex.ru/blog/obratnaya-razrabotka-reverse-engineering/" target="_blank" class="skill">Reverse Engineering</a>
+                <a href="https://learn.microsoft.com/ru-ru/training/paths/beginner-python/" target="_blank" class="skill">Python</a>
+                <a href="https://learn.microsoft.com/ru-ru/training/modules/describe-basic-cybersecurity-threat-landscape/" target="_blank" class="skill">Network Security</a>
+                <a href="https://learn.microsoft.com/ru-ru/sql/t-sql/lesson-1-creating-database-objects?view=sql-server-ver17" target="_blank" class="skill">SQL</a>
+                <a href="https://learn.microsoft.com/ru-ru/defender-endpoint/malware-analysis" target="_blank" class="skill">Malware Analysis</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">Projects & Research</div>
+            <div class="project-card">
+                <div class="project-title">
+                    KRYPT-OS (PoC)
+                    <span style="color: #ef4444; font-size: 0.8rem; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px;">Malware</span>
+                </div>
+                <div class="project-desc">
+                    Proof-of-Concept шифровальщика (Ransomware) на C++. Включает обход защиты Windows, удаление теневых копий (vssadmin), блокировку диспетчера задач и вызов BSOD через NtRaiseHardError. 
+                    <br><br>
+                    <em>* Образец успешно проанализирован в песочнице Recorded Future Sandbox (9/10 Threat Level).</em>
+                </div>
+                <a href="Malware_Analysis_Report_KRYPT-OS.pdf" target="_blank" class="btn btn-accent">[ Скачать PDF-отчет ]</a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">
+                    Network Node Analyzer
+                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">Dev</span>
+                </div>
+                <div class="project-desc">
+                    Инструмент на C++ для сбора и анализа сетевого трафика в локальной сети. Использует сокеты WinSock для перехвата пакетов и вывода статистики в реальном времени.
+                </div>
+                <a href="https://github.com/covermagic" target="_blank" class="btn">[ GitHub ]</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">Access Log (Guestbook)</div>
+            <div class="log-box" id="log-box"></div>
+            <button class="btn" onclick="openModal()">Оставить запись</button>
+        </section>
+
+        <footer>
+            <div style="margin-bottom: 15px;">
+                <a href="https://t.me/ural_tourists" target="_blank">telegram</a>
+                <a href="https://steamcommunity.com/profiles/76561199803294024/" target="_blank">steam</a>
+                <a href="mailto:covermagic.dev@gmail.com">email</a>
+            </div>
+            <p>© 2026 covermagic. All systems operational.</p>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <h3>Новая запись в лог</h3>
+            <input type="text" id="nameInput" placeholder="Ваш позывной / Имя" autocomplete="off">
+            <textarea id="textInput" placeholder="Текст сообщения..."></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn" onclick="closeModal()">Отмена</button>
+                <button class="btn btn-accent" onclick="addLog()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TextScramble {
+            constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#________'; this.update = this.update.bind(this); }
+            setText(newText) {
+                const oldText = this.el.innerText; const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve); this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || ''; const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40); const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest); this.frame = 0; this.update(); return promise;
+            }
+            update() {
+                let output = ''; let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) { complete++; output += to; }
+                    else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) { char = this.randomChar(); this.queue[i].char = char; }
+                        output += `<span class="scramble-char">${char}</span>`;
+                    } else { output += from; }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) { this.resolve(); }
+                else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+            }
+            randomChar() { return this.chars[Math.floor(Math.random() * this.chars.length)]; }
+        }
+
+        const termInput = document.getElementById('terminal-input');
+        const termOutput = document.getElementById('terminal-output');
+        const termWindow = document.getElementById('term-window');
+
+        termInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const command = termInput.value.trim().toLowerCase();
+                const prompt = `<div class="term-line"><span class="term-user">guest@covermagic:~$</span> ${termInput.value}</div>`;
+                let response = '';
+                if (command === '') { }
+                else if (command === 'help') {
+                    response = `<div class="term-line">Доступные команды:</div>
+                        <div class="term-line">  <span style="color:var(--accent)">whoami</span>   - Вывести информацию о владельце</div>
+                        <div class="term-line">  <span style="color:var(--accent)">clear</span>    - Очистить терминал</div>
+                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Показать текущее время</div>
+                        <div class="term-line">  <span style="color:var(--accent)">matrix</span>   - ???</div>`;
+                } else if (command === 'whoami') {
+                    response = `<div class="term-line">covermagic // Cybersecurity & OSINT Specialist. Status: Active.</div>`;
+                } else if (command === 'clear') { termOutput.innerHTML = ''; }
+                else if (command === 'date') { response = `<div class="term-line">${new Date().toString()}</div>`; }
+                else if (command === 'sudo' || command === 'root') { response = `<div class="term-line" style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</div>`; }
+                else if (command === 'matrix') { response = `<div class="term-line" style="color: var(--accent);">Wake up, Neo... The Matrix has you. Follow the white rabbit. 🐇</div>`; }
+                else { response = `<div class="term-line" style="color: #ef4444;">command not found: ${command}</div>`; }
+
+                termOutput.innerHTML += prompt + response;
+                termInput.value = '';
+                termWindow.scrollTop = termWindow.scrollHeight;
+            }
+        });
+
+        const modal = document.getElementById('modal');
+        const logBox = document.getElementById('log-box');
+        window.openModal = function() { modal.style.display = 'flex'; }
+        window.closeModal = function() { 
+            modal.style.display = 'none'; 
+            document.getElementById('nameInput').value = '';
+            document.getElementById('textInput').value = '';
+        }
+        window.addLog = function() {
+            const name = document.getElementById('nameInput').value.trim() || "anonymous";
+            const msg = document.getElementById('textInput').value.trim();
+            if (!msg) return;
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            const newLog = { name, msg, time };
+            let logs = JSON.parse(localStorage.getItem('cm_logs')) || [];
+            logs.push(newLog); localStorage.setItem('cm_logs', JSON.stringify(logs));
+            renderLogs(); closeModal();
+        }
+        function renderLogs() {
+            const logs = JSON.parse(localStorage.getItem('cm_logs')) || [];
+            logBox.innerHTML = '';
+            if (logs.length === 0) { logBox.innerHTML = '<div style="color: #71717a; font-style: italic;">// Логи пусты. Инициализация...</div>'; return; }
+            logs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = 'log-entry';
+                div.innerHTML = `<span class="log-time">[${log.time}]</span> <span class="log-name">${log.name}</span>: <span class="log-text">${log.msg}</span>`;
+                logBox.appendChild(div);
+            });
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+        function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 40; i++) {
+                particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.5 + 0.5 });
+            }
+        }
+        function animate() {
+            requestAnimationFrame(animate); ctx.clearRect(0, 0, width, height);
+            particles.forEach((p, idx) => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+                ctx.fillStyle = '#94a3b8'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+                for (let j = idx + 1; j < particles.length; j++) {
+                    let p2 = particles[j]; let dx = p.x - p2.x; let dy = p.y - p2.y; let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath(); ctx.strokeStyle = `rgba(148, 163, 184, ${0.15 - dist/800})`; ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+            });
+        }
+        window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+        window.addEventListener('DOMContentLoaded', () => {
+            renderLogs(); resizeCanvas(); initParticles(); animate();
+            const el = document.getElementById('header-name');
+            if (el) { const fx = new TextScramble(el); fx.setText(el.innerText); }
+        });
+    </script>
+</body>
+</html>
