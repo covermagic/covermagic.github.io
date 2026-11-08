@@ -6,45 +6,293 @@
     <title>covermagic // secure_terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #121214; --panel: #18181b; --text: #e4e4e7; --text-muted: #71717a; --accent: #94a3b8; --border: #27272a; --danger: #ef4444; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, crosshair; }
-        p, span, h1, h2, h3, div, input, textarea, a { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, auto; }
-        body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; }
-        #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.15; }
-        a { color: var(--accent); text-decoration: none; transition: color 0.3s; }
-        a:hover { color: #fff; }
-        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
-        header { padding: 60px 0 40px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 60px; }
-        .avatar { width: 85px; height: 85px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); background: var(--panel); padding: 2px; }
-        .header-info h1 { font-size: 1.8rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
-        .header-info p { font-size: 0.9rem; color: var(--text-muted); }
-        section { margin-bottom: 60px; }
-        .section-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; }
-        .section-title::before { content: ''; display: inline-block; width: 15px; height: 1px; background: var(--accent); margin-right: 10px; }
-        .terminal { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); height: 300px; overflow-y: auto; }
-        .term-header { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .term-header span { width: 8px; height: 8px; border-radius: 50%; background: #3f3f46; }
+        :root { 
+            --bg: #0d0d0f; 
+            --panel: #141417; 
+            --text: #e4e4e7; 
+            --text-muted: #71717a; 
+            --accent: #94a3b8; 
+            --accent-glow: rgba(148, 163, 184, 0.2);
+            --border: #27272a; 
+            --danger: #ef4444; 
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'JetBrains Mono', monospace; 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, crosshair; 
+        }
+
+        p, span, h1, h2, h3, div, input, textarea, a { 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, auto; 
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            line-height: 1.6; 
+            overflow-x: hidden; 
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+        }
+
+        #canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            pointer-events: none; 
+            opacity: 0.2; 
+        }
+
+        a { 
+            color: var(--accent); 
+            text-decoration: none; 
+            transition: all 0.3s; 
+        }
+        
+        a:hover { 
+            color: #fff; 
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+
+        header { 
+            padding: 60px 0 40px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            border-bottom: 1px solid var(--border); 
+            margin-bottom: 60px; 
+        }
+
+        .avatar { 
+            width: 85px; 
+            height: 85px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            border: 1px solid var(--border); 
+            background: var(--panel); 
+            padding: 2px; 
+            transition: all 0.3s;
+        }
+
+        .avatar:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .header-info h1 { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: #fff; 
+            letter-spacing: -0.5px; 
+        }
+
+        .header-info p { 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+        }
+
+        section { 
+            margin-bottom: 60px; 
+        }
+
+        .section-title { 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+        }
+
+        .section-title::before { 
+            content: ''; 
+            display: inline-block; 
+            width: 15px; 
+            height: 1px; 
+            background: var(--accent); 
+            margin-right: 10px; 
+        }
+
+        .terminal { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            padding: 20px; 
+            font-size: 0.95rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            height: 350px; 
+            overflow-y: auto; 
+            transition: border 0.3s;
+        }
+
+        .terminal:hover {
+            border-color: #3f3f46;
+        }
+
+        .terminal::-webkit-scrollbar { width: 8px; }
+        .terminal::-webkit-scrollbar-track { background: var(--bg); }
+        .terminal::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .terminal::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .term-header { 
+            display: flex; 
+            gap: 6px; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+            position: sticky;
+            top: -20px;
+            background: var(--panel);
+            z-index: 10;
+        }
+
+        .term-header span { 
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%; 
+            background: #3f3f46; 
+        }
+
         #terminal-output { margin-bottom: 10px; }
         .term-line { margin-bottom: 5px; word-wrap: break-word; }
         .term-user { color: var(--accent); }
-        .input-line { display: flex; align-items: center; }
-        .input-line span { color: var(--accent); margin-right: 10px; }
-        #terminal-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; width: 100%; outline: none; }
-        .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-        .skill { background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; transition: all 0.3s; color: var(--text); display: block; }
-        .skill:hover { border-color: var(--accent); color: #fff; background: #202024; transform: translateY(-2px); }
-        .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
-        .project-card:hover { border-color: #3f3f46; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .project-title { font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .project-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
-        .btn { display: inline-block; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 16px; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; text-decoration: none; }
-        .btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-        .btn-accent { border-color: var(--accent); color: var(--accent); }
-        .btn-accent:hover { background: var(--accent); color: var(--bg); }
-        #cusdis_thread { margin-top: 20px; }
-        footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 80px; }
+        
+        .input-line { 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .input-line span { 
+            color: var(--accent); 
+            margin-right: 10px; 
+        }
+        
+        #terminal-input { 
+            background: transparent; 
+            border: none; 
+            color: #fff; 
+            font-family: inherit; 
+            font-size: inherit; 
+            width: 100%; 
+            outline: none; 
+        }
+
+        .skills-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+
+        .skill { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            font-size: 0.85rem; 
+            transition: all 0.3s; 
+            color: var(--text); 
+            display: block; 
+        }
+
+        .skill:hover { 
+            border-color: var(--accent); 
+            color: #fff; 
+            background: #202024; 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        .project-card { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            transition: all 0.3s; 
+        }
+
+        .project-card:hover { 
+            border-color: var(--accent); 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
+            transform: translateX(5px);
+        }
+
+        .project-title { 
+            font-size: 1.1rem; 
+            color: #fff; 
+            font-weight: 700; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .project-desc { 
+            font-size: 0.9rem; 
+            color: var(--text-muted); 
+            margin-bottom: 15px; 
+        }
+
+        .btn { 
+            display: inline-block; 
+            background: transparent; 
+            color: var(--text); 
+            border: 1px solid var(--border); 
+            padding: 8px 16px; 
+            font-family: inherit; 
+            font-size: 0.85rem; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            border-radius: 4px; 
+            text-decoration: none; 
+        }
+
+        .btn:hover { 
+            background: var(--text); 
+            color: var(--bg); 
+            border-color: var(--text); 
+        }
+
+        .btn-accent { 
+            border-color: var(--accent); 
+            color: var(--accent); 
+        }
+
+        .btn-accent:hover { 
+            background: var(--accent); 
+            color: var(--bg); 
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        footer { 
+            border-top: 1px solid var(--border); 
+            padding: 40px 0; 
+            text-align: center; 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            margin-top: 80px; 
+        }
+
         footer a { margin: 0 10px; }
         .scramble-char { color: var(--accent); opacity: 0.5; }
+
+        @media (max-width: 600px) {
+            header { flex-direction: column; text-align: center; }
+            .terminal { height: 250px; }
+        }
     </style>
 </head>
 <body>
@@ -53,7 +301,7 @@
 
     <div class="container">
         <header>
-            <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/85/18181b/94a3b8?text=CM'">
+            <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/85/141417/94a3b8?text=CM'">
             <div class="header-info">
                 <h1 id="header-name">covermagic</h1>
                 <p>Cybersecurity & OSINT Specialist</p>
@@ -149,7 +397,7 @@
 
         <section>
             <div class="section-title">Guestbook (Access Log)</div>
-        <script src="https://giscus.app/client.js"
+            <script src="https://giscus.app/client.js"
                     data-repo="covermagic/covermagic.github.io"
                     data-repo-id="R_kgDOVmmlLw"
                     data-category="Announcements"
@@ -215,15 +463,17 @@
                 const command = termInput.value.trim().toLowerCase();
                 const prompt = `<div class="term-line"><span class="term-user">guest@covermagic:~$</span> ${termInput.value}</div>`;
                 let response = '';
+                
                 if (command === '') { }
                 else if (command === 'help') {
                     response = `<div class="term-line">Available commands:</div>
                         <div class="term-line">  <span style="color:var(--accent)">whoami</span>   - Info about me</div>
                         <div class="term-line">  <span style="color:var(--accent)">projects</span> - List my projects</div>
                         <div class="term-line">  <span style="color:var(--accent)">nmap</span>     - Fake network scan</div>
+                        <div class="term-line">  <span style="color:var(--accent)">hack</span>     - Simulate system breach</div>
+                        <div class="term-line">  <span style="color:var(--accent)">matrix</span>   - Toggle Matrix rain</div>
                         <div class="term-line">  <span style="color:var(--accent)">clear</span>    - Clear terminal</div>
-                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Show current time</div>
-                        <div class="term-line">  <span style="color:var(--accent)">matrix</span>   - ???</div>`;
+                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Show current time</div>`;
                 } else if (command === 'whoami') {
                     response = `<div class="term-line">covermagic // Cybersecurity & OSINT Specialist. Status: Active.</div>`;
                 } else if (command === 'projects') {
@@ -240,11 +490,32 @@
                                 <div class="term-line">80/tcp  open  http</div>
                                 <div class="term-line">443/tcp open  https</div>
                                 <div class="term-line">Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds</div>`;
-                } else if (command === 'clear') { termOutput.innerHTML = ''; }
-                else if (command === 'date') { response = `<div class="term-line">${new Date().toString()}</div>`; }
-                else if (command === 'sudo' || command === 'root') { response = `<div class="term-line" style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</div>`; }
-                else if (command === 'matrix') { response = `<div class="term-line" style="color: var(--accent);">Wake up, Neo... The Matrix has you. Follow the white rabbit. 🐇</div>`; }
-                else { response = `<div class="term-line" style="color: #ef4444;">command not found: ${command}</div>`; }
+                } else if (command === 'hack') {
+                    response = `<div class="term-line" style="color: #ef4444;">[!] INITIATING GLOBAL TAKEOVER...</div>
+                                <div class="term-line">Bypassing mainframe... <span style="color: #22c55e;">[OK]</span></div>
+                                <div class="term-line">Cracking AES-256 keys... <span style="color: #22c55e;">[OK]</span></div>
+                                <div class="term-line">Downloading classified data (42TB)... <span style="color: #22c55e;">[100%]</span></div>
+                                <div class="term-line" style="color: var(--accent); margin-top: 10px;">ACCESS GRANTED. WELCOME TO THE MATRIX.</div>`;
+                } else if (command === 'clear') { 
+                    termOutput.innerHTML = ''; 
+                }
+                else if (command === 'date') { 
+                    response = `<div class="term-line">${new Date().toString()}</div>`; 
+                }
+                else if (command === 'sudo' || command === 'root') { 
+                    response = `<div class="term-line" style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</div>`; 
+                }
+                else if (command === 'matrix') { 
+                    response = `<div class="term-line" style="color: var(--accent);">Wake up, Neo... (Matrix mode activated for 10s)</div>`; 
+                    termOutput.innerHTML += prompt + response;
+                    termInput.value = '';
+                    termWindow.scrollTop = termWindow.scrollHeight;
+                    startMatrixEffect();
+                    return;
+                }
+                else { 
+                    response = `<div class="term-line" style="color: #ef4444;">command not found: ${command}</div>`; 
+                }
 
                 termOutput.innerHTML += prompt + response;
                 termInput.value = '';
@@ -255,30 +526,102 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
-        function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        let isMatrixActive = false;
+        
+        function resizeCanvas() { 
+            width = canvas.width = window.innerWidth; 
+            height = canvas.height = window.innerHeight; 
+        }
+        
         function initParticles() {
             particles = [];
-            for (let i = 0; i < 40; i++) {
-                particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.5 + 0.5 });
+            for (let i = 0; i < 50; i++) {
+                particles.push({ 
+                    x: Math.random() * width, 
+                    y: Math.random() * height, 
+                    vx: (Math.random() - 0.5) * 0.5, 
+                    vy: (Math.random() - 0.5) * 0.5, 
+                    r: Math.random() * 1.5 + 0.5 
+                });
             }
         }
+        
         function animate() {
-            requestAnimationFrame(animate); ctx.clearRect(0, 0, width, height);
+            requestAnimationFrame(animate); 
+            if (isMatrixActive) return; 
+            
+            ctx.clearRect(0, 0, width, height);
             particles.forEach((p, idx) => {
                 p.x += p.vx; p.y += p.vy;
                 if (p.x < 0 || p.x > width) p.vx *= -1;
                 if (p.y < 0 || p.y > height) p.vy *= -1;
-                ctx.fillStyle = '#94a3b8'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+                
+                ctx.fillStyle = '#94a3b8'; 
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); 
+                ctx.fill();
+                
                 for (let j = idx + 1; j < particles.length; j++) {
-                    let p2 = particles[j]; let dx = p.x - p2.x; let dy = p.y - p2.y; let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(148, 163, 184, ${0.15 - dist/800})`; ctx.lineWidth = 0.5;
-                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    let p2 = particles[j]; 
+                    let dx = p.x - p2.x; 
+                    let dy = p.y - p2.y; 
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 150) {
+                        ctx.beginPath(); 
+                        ctx.strokeStyle = `rgba(148, 163, 184, ${0.15 - dist/1000})`; 
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y); 
+                        ctx.lineTo(p2.x, p2.y); 
+                        ctx.stroke();
                     }
                 }
             });
         }
+
+        function startMatrixEffect() {
+            if (isMatrixActive) return;
+            isMatrixActive = true; 
+            ctx.clearRect(0, 0, width, height); 
+            
+            let matrixInterval;
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'.split('');
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let x = 0; x < columns; x++) drops[x] = 1;
+            
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(13, 13, 15, 0.1)'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#94a3b8'; 
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            matrixInterval = setInterval(drawMatrix, 35);
+            
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                isMatrixActive = false; 
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                initParticles();
+            }, 10000);
+        }
+
         window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+        
         window.addEventListener('DOMContentLoaded', () => {
             resizeCanvas(); initParticles(); animate();
             const el = document.getElementById('header-name');
