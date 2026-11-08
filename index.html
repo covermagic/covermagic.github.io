@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>covermagic // developer </title>
+    <title>covermagic // secure_terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #121214; --panel: #18181b; --text: #e4e4e7; --text-muted: #71717a; --accent: #94a3b8; --border: #27272a; }
+        :root { --bg: #121214; --panel: #18181b; --text: #e4e4e7; --text-muted: #71717a; --accent: #94a3b8; --border: #27272a; --danger: #ef4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, crosshair; }
         p, span, h1, h2, h3, div, input, textarea, a { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, auto; }
         body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px; }
@@ -21,37 +21,27 @@
         section { margin-bottom: 60px; }
         .section-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; }
         .section-title::before { content: ''; display: inline-block; width: 15px; height: 1px; background: var(--accent); margin-right: 10px; }
-        .terminal { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); height: 250px; overflow-y: auto; }
+        .terminal { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); height: 300px; overflow-y: auto; }
         .term-header { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .term-header span { width: 8px; height: 8px; border-radius: 50%; background: #3f3f46; }
         #terminal-output { margin-bottom: 10px; }
-        .term-line { margin-bottom: 5px; }
+        .term-line { margin-bottom: 5px; word-wrap: break-word; }
         .term-user { color: var(--accent); }
         .input-line { display: flex; align-items: center; }
         .input-line span { color: var(--accent); margin-right: 10px; }
         #terminal-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; width: 100%; outline: none; }
         .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
         .skill { background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; border-radius: 4px; font-size: 0.85rem; transition: all 0.3s; color: var(--text); display: block; }
-        .skill:hover { border-color: var(--accent); color: #fff; background: #202024; }
+        .skill:hover { border-color: var(--accent); color: #fff; background: #202024; transform: translateY(-2px); }
         .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
-        .project-card:hover { border-color: #3f3f46; }
-        .project-title { font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+        .project-card:hover { border-color: #3f3f46; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .project-title { font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .project-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
         .btn { display: inline-block; background: transparent; color: var(--text); border: 1px solid var(--border); padding: 8px 16px; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; text-decoration: none; }
         .btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
         .btn-accent { border-color: var(--accent); color: var(--accent); }
         .btn-accent:hover { background: var(--accent); color: var(--bg); }
-        .log-box { background: #0a0a0b; border: 1px solid var(--border); border-radius: 6px; height: 200px; overflow-y: auto; padding: 15px; font-size: 0.85rem; margin-bottom: 15px; }
-        .log-entry { margin-bottom: 8px; border-bottom: 1px dashed #222; padding-bottom: 8px; }
-        .log-time { color: var(--text-muted); }
-        .log-name { color: #fff; font-weight: 700; }
-        .log-text { color: var(--accent); }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: center; }
-        .modal-box { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 8px; width: 90%; max-width: 400px; }
-        .modal-box h3 { margin-bottom: 20px; font-size: 1.1rem; }
-        input, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 12px; color: #fff; font-family: inherit; margin-bottom: 15px; border-radius: 4px; outline: none; transition: 0.3s; }
-        input:focus, textarea:focus { border-color: var(--accent); }
-        textarea { resize: vertical; height: 100px; }
+        #cusdis_thread { margin-top: 20px; }
         footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 80px; }
         footer a { margin: 0 10px; }
         .scramble-char { color: var(--accent); opacity: 0.5; }
@@ -88,13 +78,11 @@
         <section>
             <div class="section-title">Hard Skills // Knowledge Base</div>
             <div class="skills-grid">
-                <a href="https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170" target="_blank" class="skill">C++ / System Architecture</a>
+                <a href="https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170" target="_blank" class="skill">C++ / WinAPI</a>
                 <a href="https://www.gnu.org/software/bash/manual/html_node/Basic-Shell-Features.html" target="_blank" class="skill">Bash / Linux</a>
-                <a href="https://academy.cyberyozh.com/blog?category=osint" target="_blank" class="skill">OSINT / GEOINT / HUMINT</a>
-                <a href="https://practicum.yandex.ru/blog/obratnaya-razrabotka-reverse-engineering/" target="_blank" class="skill">Reverse Engineering</a>
-                <a href="https://learn.microsoft.com/ru-ru/training/paths/beginner-python/" target="_blank" class="skill">Python</a>
+                <a href="https://academy.cyberyozh.com/blog?category=osint" target="_blank" class="skill">OSINT / GEOINT</a>
+                <a href="https://learn.microsoft.com/ru-ru/training/paths/beginner-python/" target="_blank" class="skill">Python Automation</a>
                 <a href="https://learn.microsoft.com/ru-ru/training/modules/describe-basic-cybersecurity-threat-landscape/" target="_blank" class="skill">Network Security</a>
-                <a href="https://learn.microsoft.com/ru-ru/sql/t-sql/lesson-1-creating-database-objects?view=sql-server-ver17" target="_blank" class="skill">SQL</a>
                 <a href="https://learn.microsoft.com/ru-ru/defender-endpoint/malware-analysis" target="_blank" class="skill">Malware Analysis</a>
             </div>
         </section>
@@ -105,12 +93,11 @@
             <div class="project-card">
                 <div class="project-title">
                     KRYPT-OS (PoC)
-                    <span style="color: #ef4444; font-size: 0.8rem; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px;">Malware</span>
+                    <span style="color: var(--danger); font-size: 0.8rem; border: 1px solid var(--danger); padding: 2px 8px; border-radius: 4px;">Malware</span>
                 </div>
                 <div class="project-desc">
-                    Proof-of-Concept шифровальщика (Ransomware) на C++. Включает обход защиты Windows, удаление теневых копий (vssadmin), блокировку диспетчера задач и вызов BSOD через NtRaiseHardError. 
-                    <br><br>
-                    <em>* Образец успешно проанализирован в песочнице Recorded Future Sandbox (9/10 Threat Level).</em>
+                    Proof-of-Concept шифровальщика на C++. Обход защиты Windows, удаление теневых копий, вызов BSOD. 
+                    <br><em>* Проанализирован в Recorded Future Sandbox (9/10).</em>
                 </div>
                 <a href="Malware_Analysis_Report_KRYPT-OS.pdf" target="_blank" class="btn btn-accent">[ Скачать PDF-отчет ]</a>
             </div>
@@ -118,20 +105,66 @@
             <div class="project-card">
                 <div class="project-title">
                     Network Node Analyzer
-                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">Dev</span>
+                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">C++</span>
                 </div>
                 <div class="project-desc">
-                    Инструмент на C++ для сбора и анализа сетевого трафика в локальной сети. Использует сокеты WinSock (Raw Sockets) для перехвата IP-пакетов и вывода статистики в реальном времени.
+                    Консольный сниффер на C++ с использованием Raw Sockets (WinSock2). Перехватывает IP-пакеты, парсит заголовки (IP, протокол, размер) и выводит статистику в реальном времени.
                 </div>
-                <!-- ТУТ ОБНОВЛЕННАЯ ССЫЛКА -->
                 <a href="https://github.com/covermagic/network-node-analyzer" target="_blank" class="btn">[ GitHub ]</a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">
+                    Process Injector (PoC)
+                    <span style="color: var(--danger); font-size: 0.8rem; border: 1px solid var(--danger); padding: 2px 8px; border-radius: 4px;">Red Team</span>
+                </div>
+                <div class="project-desc">
+                    Proof-of-Concept внедрения шелл-кода в адресное пространство легитимного процесса (notepad.exe) на C++. Демонстрирует техники VirtualAllocEx, WriteProcessMemory и CreateRemoteThread с обходом ASLR.
+                </div>
+                <a href="https://github.com/covermagic/process-injector" target="_blank" class="btn">[ GitHub ]</a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">
+                    Linux File Integrity Monitor
+                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">Linux</span>
+                </div>
+                <div class="project-desc">
+                    Инструмент на C++ для мониторинга изменений файловой системы в реальном времени через Linux API (inotify). Основа для HIDS (Host-based Intrusion Detection System).
+                </div>
+                <a href="https://github.com/covermagic/linux-file-monitor" target="_blank" class="btn">[ GitHub ]</a>
+            </div>
+
+            <div class="project-card">
+                <div class="project-title">
+                    Advanced Packet Sniffer
+                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">C++</span>
+                </div>
+                <div class="project-desc">
+                    Продвинутый анализатор трафика с парсингом Ethernet (L2), IPv4 (L3) и TCP/UDP (L4). Выводит Hex-дамп пакетов и флаги TCP. Использует многопоточность для стабильной работы.
+                </div>
+                <a href="https://github.com/covermagic/advanced-sniffer" target="_blank" class="btn">[ GitHub ]</a>
             </div>
         </section>
 
         <section>
-            <div class="section-title">Access Log (Guestbook)</div>
-            <div class="log-box" id="log-box"></div>
-            <button class="btn" onclick="openModal()">Оставить запись</button>
+            <div class="section-title">Guestbook (Access Log)</div>
+            <!-- GISCUS КОД -->
+            <script src="https://giscus.app/client.js"
+                    data-repo="covermagic/covermagic.github.io"
+                    data-repo-id="R_kgDON... (вставь свой ID)"
+                    data-category="General"
+                    data-category-id="DIC_kwDON... (вставь свой ID)"
+                    data-mapping="pathname"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="bottom"
+                    data-theme="dark"
+                    data-lang="ru"
+                    crossorigin="anonymous"
+                    async>
+            </script>
         </section>
 
         <footer>
@@ -142,18 +175,6 @@
             </div>
             <p>© 2026 covermagic. All systems operational.</p>
         </footer>
-    </div>
-
-    <div class="modal-overlay" id="modal">
-        <div class="modal-box">
-            <h3>Новая запись в лог</h3>
-            <input type="text" id="nameInput" placeholder="Ваш позывной / Имя" autocomplete="off">
-            <textarea id="textInput" placeholder="Текст сообщения..."></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn" onclick="closeModal()">Отмена</button>
-                <button class="btn btn-accent" onclick="addLog()">Добавить</button>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -197,13 +218,29 @@
                 let response = '';
                 if (command === '') { }
                 else if (command === 'help') {
-                    response = `<div class="term-line">Доступные команды:</div>
-                        <div class="term-line">  <span style="color:var(--accent)">whoami</span>   - Вывести информацию о владельце</div>
-                        <div class="term-line">  <span style="color:var(--accent)">clear</span>    - Очистить терминал</div>
-                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Показать текущее время</div>
+                    response = `<div class="term-line">Available commands:</div>
+                        <div class="term-line">  <span style="color:var(--accent)">whoami</span>   - Info about me</div>
+                        <div class="term-line">  <span style="color:var(--accent)">projects</span> - List my projects</div>
+                        <div class="term-line">  <span style="color:var(--accent)">nmap</span>     - Fake network scan</div>
+                        <div class="term-line">  <span style="color:var(--accent)">clear</span>    - Clear terminal</div>
+                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Show current time</div>
                         <div class="term-line">  <span style="color:var(--accent)">matrix</span>   - ???</div>`;
                 } else if (command === 'whoami') {
                     response = `<div class="term-line">covermagic // Cybersecurity & OSINT Specialist. Status: Active.</div>`;
+                } else if (command === 'projects') {
+                    response = `<div class="term-line">1. KRYPT-OS (Malware PoC)</div>
+                                <div class="term-line">2. Network Node Analyzer (C++)</div>
+                                <div class="term-line">3. Process Injector (C++)</div>
+                                <div class="term-line">4. Linux File Monitor (C++)</div>
+                                <div class="term-line">5. Advanced Packet Sniffer (C++)</div>`;
+                } else if (command === 'nmap') {
+                    response = `<div class="term-line" style="color: var(--accent);">Starting Nmap 7.94 ( https://nmap.org )</div>
+                                <div class="term-line">Nmap scan report for localhost (127.0.0.1)</div>
+                                <div class="term-line">PORT    STATE SERVICE</div>
+                                <div class="term-line">22/tcp  open  ssh</div>
+                                <div class="term-line">80/tcp  open  http</div>
+                                <div class="term-line">443/tcp open  https</div>
+                                <div class="term-line">Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds</div>`;
                 } else if (command === 'clear') { termOutput.innerHTML = ''; }
                 else if (command === 'date') { response = `<div class="term-line">${new Date().toString()}</div>`; }
                 else if (command === 'sudo' || command === 'root') { response = `<div class="term-line" style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</div>`; }
@@ -215,37 +252,6 @@
                 termWindow.scrollTop = termWindow.scrollHeight;
             }
         });
-
-        const modal = document.getElementById('modal');
-        const logBox = document.getElementById('log-box');
-        window.openModal = function() { modal.style.display = 'flex'; }
-        window.closeModal = function() { 
-            modal.style.display = 'none'; 
-            document.getElementById('nameInput').value = '';
-            document.getElementById('textInput').value = '';
-        }
-        window.addLog = function() {
-            const name = document.getElementById('nameInput').value.trim() || "anonymous";
-            const msg = document.getElementById('textInput').value.trim();
-            if (!msg) return;
-            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            const newLog = { name, msg, time };
-            let logs = JSON.parse(localStorage.getItem('cm_logs')) || [];
-            logs.push(newLog); localStorage.setItem('cm_logs', JSON.stringify(logs));
-            renderLogs(); closeModal();
-        }
-        function renderLogs() {
-            const logs = JSON.parse(localStorage.getItem('cm_logs')) || [];
-            logBox.innerHTML = '';
-            if (logs.length === 0) { logBox.innerHTML = '<div style="color: #71717a; font-style: italic;">// Логи пусты. Инициализация...</div>'; return; }
-            logs.forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'log-entry';
-                div.innerHTML = `<span class="log-time">[${log.time}]</span> <span class="log-name">${log.name}</span>: <span class="log-text">${log.msg}</span>`;
-                logBox.appendChild(div);
-            });
-            logBox.scrollTop = logBox.scrollHeight;
-        }
 
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -275,7 +281,7 @@
         }
         window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
         window.addEventListener('DOMContentLoaded', () => {
-            renderLogs(); resizeCanvas(); initParticles(); animate();
+            resizeCanvas(); initParticles(); animate();
             const el = document.getElementById('header-name');
             if (el) { const fx = new TextScramble(el); fx.setText(el.innerText); }
         });
