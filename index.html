@@ -36,254 +36,155 @@
             overflow-x: hidden; 
             background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); 
             background-size: 40px 40px; 
+            position: relative;
         }
+
+        /* Динамическое свечение на фоне */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 15% 50%, rgba(148, 163, 184, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(148, 163, 184, 0.05), transparent 25%);
+            animation: bgShift 15s ease-in-out infinite alternate;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        @keyframes bgShift {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(2%, 2%); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
 
         #canvas { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            z-index: -1; 
-            pointer-events: none; 
-            opacity: 0.2; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: -1; pointer-events: none; opacity: 0.3; 
         }
 
-        a { 
-            color: var(--accent); 
-            text-decoration: none; 
-            transition: all 0.3s; 
-        }
-        
-        a:hover { 
-            color: #fff; 
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
+        a { color: var(--accent); text-decoration: none; transition: all 0.3s; }
+        a:hover { color: #fff; text-shadow: 0 0 10px var(--accent-glow); }
 
-        .container { 
-            max-width: 850px; 
-            margin: 0 auto; 
-            padding: 0 20px; 
-        }
+        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
 
         header { 
-            padding: 60px 0 40px; 
-            display: flex; 
-            align-items: center; 
-            gap: 20px; 
-            border-bottom: 1px solid var(--border); 
-            margin-bottom: 60px; 
+            padding: 60px 0 40px; display: flex; align-items: center; gap: 20px; 
+            border-bottom: 1px solid var(--border); margin-bottom: 60px; 
         }
 
         .avatar { 
-            width: 85px; 
-            height: 85px; 
-            border-radius: 8px; 
-            object-fit: cover; 
-            border: 1px solid var(--border); 
-            background: var(--panel); 
-            padding: 2px; 
-            transition: all 0.3s;
+            width: 85px; height: 85px; border-radius: 8px; object-fit: cover; 
+            border: 1px solid var(--border); background: var(--panel); padding: 2px; transition: all 0.3s;
         }
 
-        .avatar:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
+        .avatar:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+        .header-info h1 { font-size: 1.8rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+        .header-info p { font-size: 0.9rem; color: var(--text-muted); }
 
-        .header-info h1 { 
-            font-size: 1.8rem; 
-            font-weight: 700; 
-            color: #fff; 
-            letter-spacing: -0.5px; 
-        }
-
-        .header-info p { 
-            font-size: 0.9rem; 
-            color: var(--text-muted); 
-        }
-
-        section { 
-            margin-bottom: 60px; 
-        }
+        section { margin-bottom: 60px; }
 
         .section-title { 
-            font-size: 0.9rem; 
-            color: var(--text-muted); 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            align-items: center; 
+            font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; 
         }
 
         .section-title::before { 
-            content: ''; 
-            display: inline-block; 
-            width: 15px; 
-            height: 1px; 
-            background: var(--accent); 
-            margin-right: 10px; 
+            content: ''; display: inline-block; width: 15px; height: 1px; 
+            background: var(--accent); margin-right: 10px; 
         }
 
         .terminal { 
-            background: var(--panel); 
-            border: 1px solid var(--border); 
-            border-radius: 6px; 
-            padding: 20px; 
-            font-size: 0.95rem; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            height: 350px; 
-            overflow-y: auto; 
-            transition: border 0.3s;
+            background: rgba(20, 20, 23, 0.8); backdrop-filter: blur(5px);
+            border: 1px solid var(--border); border-radius: 6px; 
+            padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            height: 350px; overflow-y: auto; transition: border 0.3s; 
         }
 
-        .terminal:hover {
-            border-color: #3f3f46;
-        }
-
+        .terminal:hover { border-color: #3f3f46; }
         .terminal::-webkit-scrollbar { width: 8px; }
         .terminal::-webkit-scrollbar-track { background: var(--bg); }
         .terminal::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
         .terminal::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         .term-header { 
-            display: flex; 
-            gap: 6px; 
-            margin-bottom: 20px; 
-            border-bottom: 1px solid var(--border); 
-            padding-bottom: 15px; 
-            position: sticky;
-            top: -20px;
-            background: var(--panel);
-            z-index: 10;
+            display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; position: sticky; top: -20px; background: rgba(20, 20, 23, 0.9); z-index: 10;
         }
 
-        .term-header span { 
-            width: 10px; 
-            height: 10px; 
-            border-radius: 50%; 
-            background: #3f3f46; 
-        }
-
+        .term-header span { width: 10px; height: 10px; border-radius: 50%; background: #3f3f46; }
         #terminal-output { margin-bottom: 10px; }
-        .term-line { margin-bottom: 5px; word-wrap: break-word; }
+        .term-line { margin-bottom: 5px; word-wrap: break-word; line-height: 1.5; }
         .term-user { color: var(--accent); }
-        
-        .input-line { 
-            display: flex; 
-            align-items: center; 
-        }
-        
-        .input-line span { 
-            color: var(--accent); 
-            margin-right: 10px; 
-        }
-        
+        .input-line { display: flex; align-items: center; }
+        .input-line span { color: var(--accent); margin-right: 10px; }
+
         #terminal-input { 
-            background: transparent; 
-            border: none; 
-            color: #fff; 
-            font-family: inherit; 
-            font-size: inherit; 
-            width: 100%; 
-            outline: none; 
+            background: transparent; border: none; color: #fff; font-family: inherit; 
+            font-size: inherit; width: 100%; outline: none; 
         }
 
-        .skills-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 10px; 
+        /* Курсор консоли */
+        .blinking-cursor::after {
+            content: '▋';
+            color: var(--accent);
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
         }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
 
         .skill { 
-            background: var(--panel); 
-            border: 1px solid var(--border); 
-            padding: 8px 16px; 
-            border-radius: 4px; 
-            font-size: 0.85rem; 
-            transition: all 0.3s; 
-            color: var(--text); 
-            display: block; 
+            background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; 
+            border-radius: 4px; font-size: 0.85rem; transition: all 0.3s; color: var(--text); display: block; 
         }
 
         .skill:hover { 
-            border-color: var(--accent); 
-            color: #fff; 
-            background: #202024; 
-            transform: translateY(-2px); 
-            box-shadow: 0 5px 15px var(--accent-glow);
+            border-color: var(--accent); color: #fff; background: #202024; 
+            transform: translateY(-2px); box-shadow: 0 5px 15px var(--accent-glow); 
         }
 
         .project-card { 
-            background: var(--panel); 
-            border: 1px solid var(--border); 
-            border-radius: 6px; 
-            padding: 20px; 
-            margin-bottom: 15px; 
-            transition: all 0.3s; 
+            background: var(--panel); border: 1px solid var(--border); border-radius: 6px; 
+            padding: 20px; margin-bottom: 15px; transition: all 0.3s; 
         }
 
         .project-card:hover { 
-            border-color: var(--accent); 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4); 
-            transform: translateX(5px);
+            border-color: var(--accent); box-shadow: 0 5px 20px rgba(0,0,0,0.4); transform: translateX(5px); 
         }
 
         .project-title { 
-            font-size: 1.1rem; 
-            color: #fff; 
-            font-weight: 700; 
-            margin-bottom: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; 
+            display: flex; justify-content: space-between; align-items: center; 
         }
 
-        .project-desc { 
-            font-size: 0.9rem; 
-            color: var(--text-muted); 
-            margin-bottom: 15px; 
-        }
+        .project-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
 
         .btn { 
-            display: inline-block; 
-            background: transparent; 
-            color: var(--text); 
-            border: 1px solid var(--border); 
-            padding: 8px 16px; 
-            font-family: inherit; 
-            font-size: 0.85rem; 
-            cursor: pointer; 
-            transition: all 0.3s; 
-            border-radius: 4px; 
-            text-decoration: none; 
+            display: inline-block; background: transparent; color: var(--text); 
+            border: 1px solid var(--border); padding: 8px 16px; font-family: inherit; 
+            font-size: 0.85rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; text-decoration: none; 
         }
 
-        .btn:hover { 
-            background: var(--text); 
-            color: var(--bg); 
-            border-color: var(--text); 
-        }
-
-        .btn-accent { 
-            border-color: var(--accent); 
-            color: var(--accent); 
-        }
-
-        .btn-accent:hover { 
-            background: var(--accent); 
-            color: var(--bg); 
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
+        .btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .btn-accent { border-color: var(--accent); color: var(--accent); }
+        .btn-accent:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 15px var(--accent-glow); }
 
         footer { 
-            border-top: 1px solid var(--border); 
-            padding: 40px 0; 
-            text-align: center; 
-            font-size: 0.85rem; 
-            color: var(--text-muted); 
-            margin-top: 80px; 
+            border-top: 1px solid var(--border); padding: 40px 0; text-align: center; 
+            font-size: 0.85rem; color: var(--text-muted); margin-top: 80px; 
         }
 
         footer a { margin: 0 10px; }
@@ -300,7 +201,7 @@
     <canvas id="canvas"></canvas>
 
     <div class="container">
-        <header>
+        <header class="animate-in delay-1">
             <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/85/141417/94a3b8?text=CM'">
             <div class="header-info">
                 <h1 id="header-name">covermagic</h1>
@@ -308,7 +209,7 @@
             </div>
         </header>
 
-        <section>
+        <section class="animate-in delay-2">
             <div class="terminal" id="term-window" onclick="document.getElementById('terminal-input').focus()">
                 <div class="term-header"><span></span><span></span><span></span></div>
                 <div id="terminal-output">
@@ -323,7 +224,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="animate-in delay-3">
             <div class="section-title">Hard Skills // Knowledge Base</div>
             <div class="skills-grid">
                 <a href="https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170" target="_blank" class="skill">C++ / WinAPI</a>
@@ -335,7 +236,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="animate-in delay-4">
             <div class="section-title">Projects & Research</div>
             
             <div class="project-card">
@@ -395,7 +296,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="animate-in delay-5">
             <div class="section-title">Guestbook (Access Log)</div>
             <script src="https://giscus.app/client.js"
                     data-repo="covermagic/covermagic.github.io"
@@ -414,7 +315,7 @@
             </script>
         </section>
 
-        <footer>
+        <footer class="animate-in delay-5">
             <div style="margin-bottom: 15px;">
                 <a href="https://t.me/ural_tourists" target="_blank">telegram</a>
                 <a href="https://steamcommunity.com/profiles/76561199803294024/" target="_blank">steam</a>
@@ -458,68 +359,131 @@
         const termOutput = document.getElementById('terminal-output');
         const termWindow = document.getElementById('term-window');
 
+        // Функция для плавного вывода текста (эффект печатной машинки)
+        function typeWriterEffect(htmlContent, callback) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            
+            const textToType = tempDiv.textContent || tempDiv.innerText;
+            const finalHTML = tempDiv.innerHTML;
+            
+            let i = 0;
+            let currentHTML = "";
+            
+            termOutput.innerHTML += `<div class="term-line" id="typing-line"></div>`;
+            const typingLine = document.getElementById('typing-line');
+            typingLine.classList.add('blinking-cursor'); // Включаем мигающий курсор
+            
+            // Если текст очень длинный (как вывод nmap), печатаем быстрее, чтобы не ждать вечность
+            const speed = textToType.length > 100 ? 1 : 20; 
+
+            function typeChar() {
+                if (i < finalHTML.length) {
+                    // Хак для обработки HTML тегов (чтобы они не выводились по буквам)
+                    if (finalHTML[i] === '<') {
+                        let tag = "";
+                        while (i < finalHTML.length && finalHTML[i] !== '>') {
+                            tag += finalHTML[i];
+                            i++;
+                        }
+                        tag += '>';
+                        i++;
+                        currentHTML += tag;
+                    } else {
+                        currentHTML += finalHTML[i];
+                        i++;
+                    }
+                    typingLine.innerHTML = currentHTML;
+                    termWindow.scrollTop = termWindow.scrollHeight;
+                    setTimeout(typeChar, speed);
+                } else {
+                    typingLine.classList.remove('blinking-cursor');
+                    typingLine.removeAttribute('id');
+                    if (callback) callback();
+                }
+            }
+            typeChar();
+        }
+
         termInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                const command = termInput.value.trim().toLowerCase();
-                const prompt = `<div class="term-line"><span class="term-user">guest@covermagic:~$</span> ${termInput.value}</div>`;
-                let response = '';
+                // Блокируем ввод, пока печатается предыдущий ответ
+                termInput.disabled = true; 
                 
-                if (command === '') { }
-                else if (command === 'help') {
-                    response = `<div class="term-line">Available commands:</div>
-                        <div class="term-line">  <span style="color:var(--accent)">whoami</span>   - Info about me</div>
-                        <div class="term-line">  <span style="color:var(--accent)">projects</span> - List my projects</div>
-                        <div class="term-line">  <span style="color:var(--accent)">nmap</span>     - Fake network scan</div>
-                        <div class="term-line">  <span style="color:var(--accent)">hack</span>     - Simulate system breach</div>
-                        <div class="term-line">  <span style="color:var(--accent)">matrix</span>   - Toggle Matrix rain</div>
-                        <div class="term-line">  <span style="color:var(--accent)">clear</span>    - Clear terminal</div>
-                        <div class="term-line">  <span style="color:var(--accent)">date</span>     - Show current time</div>`;
-                } else if (command === 'whoami') {
-                    response = `<div class="term-line">covermagic // Cybersecurity & OSINT Specialist. Status: Active.</div>`;
-                } else if (command === 'projects') {
-                    response = `<div class="term-line">1. KRYPT-OS (Malware PoC)</div>
-                                <div class="term-line">2. Network Node Analyzer (C++)</div>
-                                <div class="term-line">3. Process Injector (C++)</div>
-                                <div class="term-line">4. Linux File Monitor (C++)</div>
-                                <div class="term-line">5. Advanced Packet Sniffer (C++)</div>`;
-                } else if (command === 'nmap') {
-                    response = `<div class="term-line" style="color: var(--accent);">Starting Nmap 7.94 ( https://nmap.org )</div>
-                                <div class="term-line">Nmap scan report for localhost (127.0.0.1)</div>
-                                <div class="term-line">PORT    STATE SERVICE</div>
-                                <div class="term-line">22/tcp  open  ssh</div>
-                                <div class="term-line">80/tcp  open  http</div>
-                                <div class="term-line">443/tcp open  https</div>
-                                <div class="term-line">Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds</div>`;
-                } else if (command === 'hack') {
-                    response = `<div class="term-line" style="color: #ef4444;">[!] INITIATING GLOBAL TAKEOVER...</div>
-                                <div class="term-line">Bypassing mainframe... <span style="color: #22c55e;">[OK]</span></div>
-                                <div class="term-line">Cracking AES-256 keys... <span style="color: #22c55e;">[OK]</span></div>
-                                <div class="term-line">Downloading classified data (42TB)... <span style="color: #22c55e;">[100%]</span></div>
-                                <div class="term-line" style="color: var(--accent); margin-top: 10px;">ACCESS GRANTED. WELCOME TO THE MATRIX.</div>`;
-                } else if (command === 'clear') { 
-                    termOutput.innerHTML = ''; 
-                }
-                else if (command === 'date') { 
-                    response = `<div class="term-line">${new Date().toString()}</div>`; 
-                }
-                else if (command === 'sudo' || command === 'root') { 
-                    response = `<div class="term-line" style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</div>`; 
-                }
-                else if (command === 'matrix') { 
-                    response = `<div class="term-line" style="color: var(--accent);">Wake up, Neo... (Matrix mode activated for 10s)</div>`; 
-                    termOutput.innerHTML += prompt + response;
-                    termInput.value = '';
-                    termWindow.scrollTop = termWindow.scrollHeight;
-                    startMatrixEffect();
-                    return;
-                }
-                else { 
-                    response = `<div class="term-line" style="color: #ef4444;">command not found: ${command}</div>`; 
-                }
-
-                termOutput.innerHTML += prompt + response;
+                const command = termInput.value.trim().toLowerCase();
+                const originalValue = termInput.value;
+                
+                // Мгновенно выводим то, что ввел пользователь
+                const prompt = `<div class="term-line"><span class="term-user">guest@covermagic:~$</span> ${originalValue}</div>`;
+                termOutput.innerHTML += prompt;
                 termInput.value = '';
                 termWindow.scrollTop = termWindow.scrollHeight;
+
+                let response = '';
+                let isMatrix = false;
+
+                if (command === '') { 
+                    termInput.disabled = false;
+                    return; 
+                }
+                else if (command === 'help') {
+                    response = `Available commands:<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">whoami</span>&nbsp;&nbsp;&nbsp;- Info about me<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">projects</span>&nbsp;- List my projects<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">nmap</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Fake network scan<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">hack</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Simulate system breach<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">matrix</span>&nbsp;&nbsp;&nbsp;- Toggle Matrix rain<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">clear</span>&nbsp;&nbsp;&nbsp;&nbsp;- Clear terminal<br>
+                        &nbsp;&nbsp;<span style="color:var(--accent)">date</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Show current time`;
+                } else if (command === 'whoami') {
+                    response = `covermagic // Cybersecurity & OSINT Specialist. Status: Active.`;
+                } else if (command === 'projects') {
+                    response = `1. KRYPT-OS (Malware PoC)<br>
+                                2. Network Node Analyzer (C++)<br>
+                                3. Process Injector (C++)<br>
+                                4. Linux File Monitor (C++)<br>
+                                5. Advanced Packet Sniffer (C++)`;
+                } else if (command === 'nmap') {
+                    response = `<span style="color: var(--accent);">Starting Nmap 7.94 ( https://nmap.org )</span><br>
+                                Nmap scan report for localhost (127.0.0.1)<br>
+                                PORT    STATE SERVICE<br>
+                                22/tcp  open  ssh<br>
+                                80/tcp  open  http<br>
+                                443/tcp open  https<br>
+                                <span style="color: var(--accent);">Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds</span>`;
+                } else if (command === 'hack') {
+                    response = `<span style="color: #ef4444;">[!] INITIATING GLOBAL TAKEOVER...</span><br>
+                                Bypassing mainframe... <span style="color: #22c55e;">[OK]</span><br>
+                                Cracking AES-256 keys... <span style="color: #22c55e;">[OK]</span><br>
+                                Downloading classified data (42TB)... <span style="color: #22c55e;">[100%]</span><br>
+                                <span style="color: var(--accent); margin-top: 10px; display: block;">ACCESS GRANTED. WELCOME TO THE MATRIX.</span>`;
+                } else if (command === 'clear') { 
+                    termOutput.innerHTML = ''; 
+                    termInput.disabled = false;
+                    return;
+                }
+                else if (command === 'date') { 
+                    response = `${new Date().toString()}`; 
+                }
+                else if (command === 'sudo' || command === 'root') { 
+                    response = `<span style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</span>`; 
+                }
+                else if (command === 'matrix') { 
+                    response = `<span style="color: var(--accent);">Wake up, Neo... (Matrix mode activated for 10s)</span>`;
+                    isMatrix = true;
+                }
+                else { 
+                    response = `<span style="color: #ef4444;">command not found: ${command}</span>`; 
+                }
+
+                // Запускаем эффект печатной машинки
+                typeWriterEffect(response, () => {
+                    termInput.disabled = false;
+                    termInput.focus();
+                    if (isMatrix) {
+                        startMatrixEffect();
+                    }
+                });
             }
         });
 
