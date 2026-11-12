@@ -3,593 +3,685 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>covermagic // my_bio.txt</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <title>covermagic | Cybersecurity</title>
+    <meta name="description" content="Портфолио covermagic. Изучаю C++ и кибербезопасность. Проекты для Windows и Linux.">
+    
+    <meta property="og:title" content="covermagic | Cybersecurity & OSINT">
+    <meta property="og:description" content="Портфолио covermagic. Изучаю C++ и кибербезопасность. Проекты для Windows и Linux.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://covermagic.github.io">
+    <meta property="og:image" content="https://covermagic.github.io/og-image.jpg">
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { 
-            --bg: #0d0d0f; 
-            --panel: #141417; 
-            --text: #e4e4e7; 
-            --text-muted: #71717a; 
-            --accent: #94a3b8; 
-            --accent-glow: rgba(148, 163, 184, 0.2);
-            --border: #27272a; 
-            --danger: #ef4444; 
+        :root {
+            --bg: #09090b;
+            --panel: #121214;
+            --panel-hover: #18181b;
+            --text: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --accent: #22d3ee;
+            --accent-dim: rgba(34, 211, 238, 0.1);
+            --border: #27272a;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'JetBrains Mono', monospace; 
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, crosshair; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        p, span, h1, h2, h3, div, input, textarea, a { 
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="%2394a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="%2394a3b8"/></svg>') 12 12, auto; 
-        }
-
-        body { 
-            background-color: var(--bg); 
-            color: var(--text); 
-            line-height: 1.6; 
-            overflow-x: hidden; 
-            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); 
-            background-size: 40px 40px; 
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(34, 211, 238, 0.03), transparent 30%),
+                radial-gradient(circle at 85% 30%, rgba(34, 211, 238, 0.03), transparent 30%);
+            color: var(--text);
+            line-height: 1.6;
             position: relative;
+            overflow-x: hidden;
+            isolation: isolate;
         }
 
-        /* Динамическое свечение на фоне */
-        body::before {
-            content: '';
+        #bg-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 15% 50%, rgba(148, 163, 184, 0.08), transparent 25%),
-                        radial-gradient(circle at 85% 30%, rgba(148, 163, 184, 0.05), transparent 25%);
-            animation: bgShift 15s ease-in-out infinite alternate;
-            z-index: -2;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             pointer-events: none;
         }
 
-        @keyframes bgShift {
-            0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.1) translate(2%, 2%); }
+        @media (prefers-reduced-motion: reduce) {
+            #bg-canvas {
+                display: none;
+            }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-
-        #canvas { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: -1; pointer-events: none; opacity: 0.3; 
-        }
-
-        a { color: var(--accent); text-decoration: none; transition: all 0.3s; }
-        a:hover { color: #fff; text-shadow: 0 0 10px var(--accent-glow); }
-
-        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
-
-        header { 
-            padding: 60px 0 40px; display: flex; align-items: center; gap: 20px; 
-            border-bottom: 1px solid var(--border); margin-bottom: 60px; 
-        }
-
-        .avatar { 
-            width: 85px; height: 85px; border-radius: 8px; object-fit: cover; 
-            border: 1px solid var(--border); background: var(--panel); padding: 2px; transition: all 0.3s;
-        }
-
-        .avatar:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-        .header-info h1 { font-size: 1.8rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
-        .header-info p { font-size: 0.9rem; color: var(--text-muted); }
-
-        section { margin-bottom: 60px; }
-
-        .section-title { 
-            font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; 
-            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; 
-        }
-
-        .section-title::before { 
-            content: ''; display: inline-block; width: 15px; height: 1px; 
-            background: var(--accent); margin-right: 10px; 
-        }
-
-        .terminal { 
-            background: rgba(20, 20, 23, 0.8); backdrop-filter: blur(5px);
-            border: 1px solid var(--border); border-radius: 6px; 
-            padding: 20px; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            height: 350px; overflow-y: auto; transition: border 0.3s; 
-        }
-
-        .terminal:hover { border-color: #3f3f46; }
-        .terminal::-webkit-scrollbar { width: 8px; }
-        .terminal::-webkit-scrollbar-track { background: var(--bg); }
-        .terminal::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
-        .terminal::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        .term-header { 
-            display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--border); 
-            padding-bottom: 15px; position: sticky; top: -20px; background: rgba(20, 20, 23, 0.9); z-index: 10;
-        }
-
-        .term-header span { width: 10px; height: 10px; border-radius: 50%; background: #3f3f46; }
-        #terminal-output { margin-bottom: 10px; }
-        .term-line { margin-bottom: 5px; word-wrap: break-word; line-height: 1.5; }
-        .term-user { color: var(--accent); }
-        .input-line { display: flex; align-items: center; }
-        .input-line span { color: var(--accent); margin-right: 10px; }
-
-        #terminal-input { 
-            background: transparent; border: none; color: #fff; font-family: inherit; 
-            font-size: inherit; width: 100%; outline: none; 
-        }
-
-        /* Курсор консоли */
-        .blinking-cursor::after {
-            content: '▋';
+        a {
             color: var(--accent);
-            animation: blink 1s step-end infinite;
-            margin-left: 2px;
+            text-decoration: none;
+            transition: opacity 0.2s;
         }
 
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-
-        .skill { 
-            background: var(--panel); border: 1px solid var(--border); padding: 8px 16px; 
-            border-radius: 4px; font-size: 0.85rem; transition: all 0.3s; color: var(--text); display: block; 
+        a:hover {
+            opacity: 0.8;
         }
 
-        .skill:hover { 
-            border-color: var(--accent); color: #fff; background: #202024; 
-            transform: translateY(-2px); box-shadow: 0 5px 15px var(--accent-glow); 
+        a:focus-visible, .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
-        .project-card { 
-            background: var(--panel); border: 1px solid var(--border); border-radius: 6px; 
-            padding: 20px; margin-bottom: 15px; transition: all 0.3s; 
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        .project-card:hover { 
-            border-color: var(--accent); box-shadow: 0 5px 20px rgba(0,0,0,0.4); transform: translateX(5px); 
+        header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .project-title { 
-            font-size: 1.1rem; color: #fff; font-weight: 700; margin-bottom: 10px; 
-            display: flex; justify-content: space-between; align-items: center; 
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            background: var(--panel);
         }
 
-        .project-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
-
-        .btn { 
-            display: inline-block; background: transparent; color: var(--text); 
-            border: 1px solid var(--border); padding: 8px 16px; font-family: inherit; 
-            font-size: 0.85rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; text-decoration: none; 
+        .bio h1 {
+            font-size: 2rem;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
 
-        .btn:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
-        .btn-accent { border-color: var(--accent); color: var(--accent); }
-        .btn-accent:hover { background: var(--accent); color: var(--bg); box-shadow: 0 0 15px var(--accent-glow); }
-
-        footer { 
-            border-top: 1px solid var(--border); padding: 40px 0; text-align: center; 
-            font-size: 0.85rem; color: var(--text-muted); margin-top: 80px; 
+        .bio .role {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-weight: 500;
         }
 
-        footer a { margin: 0 10px; }
-        .scramble-char { color: var(--accent); opacity: 0.5; }
+        .bio .tagline {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .links a {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .links a:hover {
+            color: var(--accent);
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2.section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2.section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .about-text p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            max-width: 750px;
+        }
+        
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .learning-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .learning-list li {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .learning-list li:hover {
+            border-color: var(--border);
+            background: var(--panel-hover);
+        }
+        
+        .learning-list li::before {
+            content: '↗';
+            color: var(--accent);
+            margin-right: 12px;
+            font-weight: bold;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 25px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .project-card.featured {
+            border-color: rgba(34, 211, 238, 0.4);
+            background: linear-gradient(180deg, rgba(34, 211, 238, 0.05) 0%, var(--panel) 100%);
+        }
+
+        .featured-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .project-stack {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .project-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        
+        .project-desc code {
+            background: rgba(255,255,255,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--text);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--border);
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .contacts-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contacts-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contacts-links a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .contacts-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        footer span {
+            color: var(--accent);
+        }
 
         @media (max-width: 600px) {
-            header { flex-direction: column; text-align: center; }
-            .terminal { height: 250px; }
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .links a {
+                margin: 0 10px;
+            }
+            .project-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .contacts-links {
+                flex-direction: column;
+                gap: 12px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
     <div class="container">
-        <header class="animate-in delay-1">
-            <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/85/141417/94a3b8?text=CM'">
-            <div class="header-info">
-                <h1 id="header-name">covermagic</h1>
-                <p>Cybersecurity & OSINT Specialist</p>
+        
+        <header>
+            <img src="avatar.jpg" alt="covermagic" class="avatar" onerror="this.src='https://via.placeholder.com/100/121214/22d3ee?text=CM'">
+            <div class="bio">
+                <h1>covermagic</h1>
+                <div class="role">Младший специалист по кибербезопасности</div>
+                <div class="tagline">Пишу системные утилиты, исследую сети и ищу уязвимости.</div>
+                <div class="links">
+                    <a href="https://github.com/covermagic" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <a href="https://t.me/ural_tourists" target="_blank" rel="noopener noreferrer">Telegram</a>
+                    <a href="mailto:covermagic.dev@gmail.com">Email</a>
+                </div>
             </div>
         </header>
 
-        <section class="animate-in delay-2">
-            <div class="terminal" id="term-window" onclick="document.getElementById('terminal-input').focus()">
-                <div class="term-header"><span></span><span></span><span></span></div>
-                <div id="terminal-output">
-                    <div class="term-line"><span class="term-user">guest@covermagic:~$</span> ./init.sh</div>
-                    <div class="term-line" style="color: var(--text-muted); font-style: italic;">Initializing secure connection...</div>
-                    <div class="term-line" style="color: var(--text-muted); font-style: italic; margin-bottom: 15px;">Type 'help' for available commands.</div>
+        <section>
+            <h2 class="section-title">Обо мне</h2>
+            <div class="about-text">
+                <p>Занимаюсь кибербезопасностью с упором на системное программирование и анализ уязвимостей. Изучаю архитектуру Windows и Linux, пишу инструменты для мониторинга и защиты информации.</p>
+                <p>Помимо кода, увлекаюсь альпинизмом и тактической подготовкой.</p>
+                <p>Постоянно учусь новому и открыт к сложным задачам в сфере информационной безопасности.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Сейчас изучаю</h2>
+            <ul class="learning-list">
+                <li><a href="https://academy.cyberyozh.com/blog?category=osint" target="_blank" rel="noopener noreferrer">OSINT-разведка (курс от CyberYozh)</a></li>
+                <li><a href="https://learn.microsoft.com/ru-ru/cpp/windows/" target="_blank" rel="noopener noreferrer">Разработка системных утилит на C++ (MS Learn)</a></li>
+                <li><a href="https://www.coursera.org/learn/cybersecurity" target="_blank" rel="noopener noreferrer">Основы кибербезопасности (Coursera)</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 class="section-title">Основные проекты</h2>
+            <div class="projects-grid">
+                
+                <div class="project-card featured">
+                    <div class="featured-badge">Главный проект</div>
+                    <div class="project-header">
+                        <div class="project-title">KRYPT-OS (PoC)</div>
+                        <div class="project-stack">C++ / WinAPI</div>
+                    </div>
+                    <div class="project-desc">
+                        Proof-of-Concept шифровальщика на C++. Обход защиты Windows, удаление теневых копий, вызов BSOD. Песочница Recorded Future присвоила образцу оценку 9/10 (Threat Level: Likely Malicious). Детали в PDF-отчете.
+                    </div>
+                    <div class="project-links">
+                        <a href="Malware_Analysis_Report_KRYPT-OS.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary">PDF-отчет</a>
+                        <a href="https://github.com/covermagic/KRYPT-OS" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+                    </div>
                 </div>
-                <div class="input-line">
-                    <span>guest@covermagic:~$</span>
-                    <input type="text" id="terminal-input" autocomplete="off" autofocus>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">Network Node Analyzer</div>
+                        <div class="project-stack">C++ / WinSock2</div>
+                    </div>
+                    <div class="project-desc">
+                        Консольный сниффер на C++. Перехватывает IP-пакеты, парсит заголовки (IP, протокол, размер) и выводит статистику в реальном времени.
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/covermagic/network-node-analyzer" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">Process Injector (PoC)</div>
+                        <div class="project-stack">C++ / Red Team</div>
+                    </div>
+                    <div class="project-desc">
+                        Proof-of-Concept внедрения шелл-кода в адресное пространство процесса (notepad.exe). Демонстрирует VirtualAllocEx, WriteProcessMemory и CreateRemoteThread с динамическим получением адреса функции.
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/covermagic/Advanced-Process-Injector" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">Linux File Integrity Monitor</div>
+                        <div class="project-stack">C++ / Linux</div>
+                    </div>
+                    <div class="project-desc">
+                        Инструмент для мониторинга изменений файловой системы в реальном времени через API <code>inotify</code>. Основа для HIDS (Host-based Intrusion Detection System).
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/covermagic/linux-file-monitor" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts-box">
+                <div class="contacts-links">
+                    <a href="https://github.com/covermagic" target="_blank" rel="noopener noreferrer">GitHub.</a>
+                    <a href="https://t.me/ural_tourists" target="_blank" rel="noopener noreferrer">Telegram.</a>
+                    <a href="mailto:covermagic.dev@gmail.com">Email.</a>
+                </div>
+                <div class="contacts-note">
+                    Готов к предложениям, вопросам и совместным проектам в сфере ИБ.
                 </div>
             </div>
         </section>
 
-        <section class="animate-in delay-3">
-            <div class="section-title">Hard Skills // Knowledge Base</div>
-            <div class="skills-grid">
-                <a href="https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170" target="_blank" class="skill">C++ / WinAPI</a>
-                <a href="https://www.gnu.org/software/bash/manual/html_node/Basic-Shell-Features.html" target="_blank" class="skill">Bash / Linux</a>
-                <a href="https://academy.cyberyozh.com/blog?category=osint" target="_blank" class="skill">OSINT / GEOINT</a>
-                <a href="https://learn.microsoft.com/ru-ru/training/paths/beginner-python/" target="_blank" class="skill">Python Automation</a>
-                <a href="https://learn.microsoft.com/ru-ru/training/modules/describe-basic-cybersecurity-threat-landscape/" target="_blank" class="skill">Network Security</a>
-                <a href="https://learn.microsoft.com/ru-ru/defender-endpoint/malware-analysis" target="_blank" class="skill">Malware Analysis</a>
-            </div>
-        </section>
-
-        <section class="animate-in delay-4">
-            <div class="section-title">Projects & Research</div>
-            
-            <div class="project-card">
-                <div class="project-title">
-                    KRYPT-OS (PoC)
-                    <span style="color: var(--danger); font-size: 0.8rem; border: 1px solid var(--danger); padding: 2px 8px; border-radius: 4px;">Malware</span>
-                </div>
-                <div class="project-desc">
-                    Proof-of-Concept шифровальщика на C++. Обход защиты Windows, удаление теневых копий, вызов BSOD. 
-                    <br><em>* Проанализирован в Recorded Future Sandbox (9/10).</em>
-                </div>
-                <a href="Malware_Analysis_Report_KRYPT-OS.pdf" target="_blank" class="btn btn-accent">[ Скачать PDF-отчет ]</a>
-            </div>
-
-            <div class="project-card">
-                <div class="project-title">
-                    Network Node Analyzer
-                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">C++</span>
-                </div>
-                <div class="project-desc">
-                    Консольный сниффер на C++ с использованием Raw Sockets (WinSock2). Перехватывает IP-пакеты, парсит заголовки (IP, протокол, размер) и выводит статистику в реальном времени.
-                </div>
-                <a href="https://github.com/covermagic/network-node-analyzer" target="_blank" class="btn">[ GitHub ]</a>
-            </div>
-
-            <div class="project-card">
-                <div class="project-title">
-                    Process Injector (PoC)
-                    <span style="color: var(--danger); font-size: 0.8rem; border: 1px solid var(--danger); padding: 2px 8px; border-radius: 4px;">Red Team</span>
-                </div>
-                <div class="project-desc">
-                    Proof-of-Concept внедрения шелл-кода в адресное пространство легитимного процесса (notepad.exe) на C++. Демонстрирует техники VirtualAllocEx, WriteProcessMemory и CreateRemoteThread с обходом ASLR.
-                </div>
-                <a href="https://github.com/covermagic/Advanced-Process-Injector" target="_blank" class="btn">[ GitHub ]</a>
-            </div>
-
-            <div class="project-card">
-                <div class="project-title">
-                    Linux File Integrity Monitor
-                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">Linux</span>
-                </div>
-                <div class="project-desc">
-                    Инструмент на C++ для мониторинга изменений файловой системы в реальном времени через Linux API (inotify). Основа для HIDS (Host-based Intrusion Detection System).
-                </div>
-                <a href="https://github.com/covermagic/linux-file-monitor" target="_blank" class="btn">[ GitHub ]</a>
-            </div>
-
-            <div class="project-card">
-                <div class="project-title">
-                    Advanced Packet Sniffer
-                    <span style="color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px;">C++</span>
-                </div>
-                <div class="project-desc">
-                    Продвинутый анализатор трафика с парсингом Ethernet (L2), IPv4 (L3) и TCP/UDP (L4). Выводит Hex-дамп пакетов и флаги TCP. Использует многопоточность для стабильной работы.
-                </div>
-                <a href="https://github.com/covermagic/Linux-Raw-Socket-Sniffer" target="_blank" class="btn">[ GitHub ]</a>
-            </div>
-        </section>
-
-        <section class="animate-in delay-5">
-            <div class="section-title">Guestbook (Access Log)</div>
-            <script src="https://giscus.app/client.js"
-                    data-repo="covermagic/covermagic.github.io"
-                    data-repo-id="R_kgDOVmmlLw"
-                    data-category="Announcements"
-                    data-category-id="DIC_kwDOVmmlL84DKpkE"
-                    data-mapping="pathname"
-                    data-strict="0"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="bottom"
-                    data-theme="dark"
-                    data-lang="ru"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-        </section>
-
-        <footer class="animate-in delay-5">
-            <div style="margin-bottom: 15px;">
-                <a href="https://t.me/ural_tourists" target="_blank">telegram</a>
-                <a href="https://steamcommunity.com/profiles/76561199803294024/" target="_blank">steam</a>
-                <a href="mailto:covermagic.dev@gmail.com">email</a>
-            </div>
-            <p>© 2026 covermagic. All systems operational.</p>
+        <footer>
+            <p>© 2026 covermagic. <span>Zero trust.</span></p>
         </footer>
     </div>
 
     <script>
-        class TextScramble {
-            constructor(el) { this.el = el; this.chars = '!<>-_\\/[]{}—=+*^?#________'; this.update = this.update.bind(this); }
-            setText(newText) {
-                const oldText = this.el.innerText; const length = Math.max(oldText.length, newText.length);
-                const promise = new Promise((resolve) => this.resolve = resolve); this.queue = [];
-                for (let i = 0; i < length; i++) {
-                    const from = oldText[i] || ''; const to = newText[i] || '';
-                    const start = Math.floor(Math.random() * 40); const end = start + Math.floor(Math.random() * 40);
-                    this.queue.push({ from, to, start, end });
-                }
-                cancelAnimationFrame(this.frameRequest); this.frame = 0; this.update(); return promise;
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById('bg-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            let width, height;
+            let particles = [];
+            let mouse = { x: null, y: null, radius: 150 };
+            let clicks = [];
+            let animationFrameId;
+            let isPaused = false;
+            let isMobile = window.innerWidth < 768;
+
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReducedMotion) {
+                canvas.style.display = 'none';
+                return;
             }
-            update() {
-                let output = ''; let complete = 0;
-                for (let i = 0, n = this.queue.length; i < n; i++) {
-                    let { from, to, start, end, char } = this.queue[i];
-                    if (this.frame >= end) { complete++; output += to; }
-                    else if (this.frame >= start) {
-                        if (!char || Math.random() < 0.28) { char = this.randomChar(); this.queue[i].char = char; }
-                        output += `<span class="scramble-char">${char}</span>`;
-                    } else { output += from; }
-                }
-                this.el.innerHTML = output;
-                if (complete === this.queue.length) { this.resolve(); }
-                else { this.frameRequest = requestAnimationFrame(this.update); this.frame++; }
+
+            const accentColor = '34, 211, 238';
+            const baseColor = '148, 163, 184';
+            const particleSpeed = 0.3;
+
+            function resize() {
+                isMobile = window.innerWidth < 768;
+                const dpr = window.devicePixelRatio || 1;
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width * dpr;
+                canvas.height = height * dpr;
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
+                ctx.scale(dpr, dpr);
+                initParticles();
             }
-            randomChar() { return this.chars[Math.floor(Math.random() * this.chars.length)]; }
-        }
 
-        const termInput = document.getElementById('terminal-input');
-        const termOutput = document.getElementById('terminal-output');
-        const termWindow = document.getElementById('term-window');
+            function initParticles() {
+                const count = isMobile ? 30 : 80;
+                particles = [];
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * particleSpeed,
+                        vy: (Math.random() - 0.5) * particleSpeed,
+                        radius: Math.random() * 1.5 + 0.5,
+                        baseRadius: Math.random() * 1.5 + 0.5
+                    });
+                }
+            }
 
-        // Функция для плавного вывода текста (эффект печатной машинки)
-        function typeWriterEffect(htmlContent, callback) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            
-            const textToType = tempDiv.textContent || tempDiv.innerText;
-            const finalHTML = tempDiv.innerHTML;
-            
-            let i = 0;
-            let currentHTML = "";
-            
-            termOutput.innerHTML += `<div class="term-line" id="typing-line"></div>`;
-            const typingLine = document.getElementById('typing-line');
-            typingLine.classList.add('blinking-cursor'); // Включаем мигающий курсор
-            
-            // Если текст очень длинный (как вывод nmap), печатаем быстрее, чтобы не ждать вечность
-            const speed = textToType.length > 100 ? 1 : 20; 
+            window.addEventListener('pointermove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
 
-            function typeChar() {
-                if (i < finalHTML.length) {
-                    // Хак для обработки HTML тегов (чтобы они не выводились по буквам)
-                    if (finalHTML[i] === '<') {
-                        let tag = "";
-                        while (i < finalHTML.length && finalHTML[i] !== '>') {
-                            tag += finalHTML[i];
-                            i++;
+            window.addEventListener('pointerleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            window.addEventListener('pointerdown', (e) => {
+                if (clicks.length >= 5) {
+                    clicks.shift();
+                }
+                clicks.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    radius: 0,
+                    maxRadius: isMobile ? 100 : 200,
+                    opacity: 0.5
+                });
+            });
+
+            function animate() {
+                if (isPaused) return;
+                
+                ctx.clearRect(0, 0, width, height);
+
+                const lineDistance = isMobile ? 80 : 120;
+
+                particles.forEach((p, i) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                    if (mouse.x !== null && mouse.y !== null) {
+                        let dxMouse = p.x - mouse.x;
+                        let dyMouse = p.y - mouse.y;
+                        let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+                        if (distMouse < mouse.radius && distMouse > 0) {
+                            const forceDirectionX = dxMouse / distMouse;
+                            const forceDirectionY = dyMouse / distMouse;
+                            const force = (mouse.radius - distMouse) / mouse.radius;
+                            const directionX = forceDirectionX * force * 2;
+                            const directionY = forceDirectionY * force * 2;
+                            
+                            p.x += directionX;
+                            p.y += directionY;
                         }
-                        tag += '>';
-                        i++;
-                        currentHTML += tag;
+                    }
+
+                    let isHit = false;
+                    clicks.forEach((click) => {
+                        const dxClick = p.x - click.x;
+                        const dyClick = p.y - click.y;
+                        const distClick = Math.sqrt(dxClick * dxClick + dyClick * dyClick);
+                        
+                        if (Math.abs(distClick - click.radius) < 30) {
+                            isHit = true;
+                        }
+                    });
+
+                    if (isHit) {
+                        ctx.fillStyle = `rgba(${accentColor}, 0.8)`;
+                        p.radius = p.baseRadius * 2;
                     } else {
-                        currentHTML += finalHTML[i];
-                        i++;
+                        ctx.fillStyle = `rgba(${baseColor}, 0.4)`;
+                        p.radius = p.baseRadius;
                     }
-                    typingLine.innerHTML = currentHTML;
-                    termWindow.scrollTop = termWindow.scrollHeight;
-                    setTimeout(typeChar, speed);
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const dx = p.x - p2.x;
+                        const dy = p.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < lineDistance) {
+                            let lineHighlight = false;
+                            clicks.forEach((click) => {
+                                const midX = (p.x + p2.x) / 2;
+                                const midY = (p.y + p2.y) / 2;
+                                const distMid = Math.sqrt(Math.pow(midX - click.x, 2) + Math.pow(midY - click.y, 2));
+                                if (Math.abs(distMid - click.radius) < 20) {
+                                    lineHighlight = true;
+                                }
+                            });
+
+                            const opacity = 0.15 - (dist / lineDistance) * 0.15;
+                            
+                            ctx.beginPath();
+                            if (lineHighlight) {
+                                ctx.strokeStyle = `rgba(${accentColor}, ${opacity * 2})`;
+                            } else {
+                                ctx.strokeStyle = `rgba(${baseColor}, ${opacity})`;
+                            }
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                });
+
+                for (let i = clicks.length - 1; i >= 0; i--) {
+                    const click = clicks[i];
+                    click.radius += 4;
+                    click.opacity -= 0.01;
+
+                    ctx.beginPath();
+                    ctx.arc(click.x, click.y, click.radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(${accentColor}, ${click.opacity})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    if (click.radius > click.maxRadius || click.opacity <= 0) {
+                        clicks.splice(i, 1);
+                    }
+                }
+
+                animationFrameId = requestAnimationFrame(animate);
+            }
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) {
+                    isPaused = true;
+                    cancelAnimationFrame(animationFrameId);
                 } else {
-                    typingLine.classList.remove('blinking-cursor');
-                    typingLine.removeAttribute('id');
-                    if (callback) callback();
-                }
-            }
-            typeChar();
-        }
-
-        termInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                // Блокируем ввод, пока печатается предыдущий ответ
-                termInput.disabled = true; 
-                
-                const command = termInput.value.trim().toLowerCase();
-                const originalValue = termInput.value;
-                
-                // Мгновенно выводим то, что ввел пользователь
-                const prompt = `<div class="term-line"><span class="term-user">guest@covermagic:~$</span> ${originalValue}</div>`;
-                termOutput.innerHTML += prompt;
-                termInput.value = '';
-                termWindow.scrollTop = termWindow.scrollHeight;
-
-                let response = '';
-                let isMatrix = false;
-
-                if (command === '') { 
-                    termInput.disabled = false;
-                    return; 
-                }
-                else if (command === 'help') {
-                    response = `Available commands:<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">whoami</span>&nbsp;&nbsp;&nbsp;- Info about me<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">projects</span>&nbsp;- List my projects<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">nmap</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Fake network scan<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">hack</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Simulate system breach<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">matrix</span>&nbsp;&nbsp;&nbsp;- Toggle Matrix rain<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">clear</span>&nbsp;&nbsp;&nbsp;&nbsp;- Clear terminal<br>
-                        &nbsp;&nbsp;<span style="color:var(--accent)">date</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Show current time`;
-                } else if (command === 'whoami') {
-                    response = `covermagic // Cybersecurity & OSINT Specialist. Status: Active.`;
-                } else if (command === 'projects') {
-                    response = `1. KRYPT-OS (Malware PoC)<br>
-                                2. Network Node Analyzer (C++)<br>
-                                3. Process Injector (C++)<br>
-                                4. Linux File Monitor (C++)<br>
-                                5. Advanced Packet Sniffer (C++)`;
-                } else if (command === 'nmap') {
-                    response = `<span style="color: var(--accent);">Starting Nmap 7.94 ( https://nmap.org )</span><br>
-                                Nmap scan report for localhost (127.0.0.1)<br>
-                                PORT    STATE SERVICE<br>
-                                22/tcp  open  ssh<br>
-                                80/tcp  open  http<br>
-                                443/tcp open  https<br>
-                                <span style="color: var(--accent);">Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds</span>`;
-                } else if (command === 'hack') {
-                    response = `<span style="color: #ef4444;">[!] INITIATING GLOBAL TAKEOVER...</span><br>
-                                Bypassing mainframe... <span style="color: #22c55e;">[OK]</span><br>
-                                Cracking AES-256 keys... <span style="color: #22c55e;">[OK]</span><br>
-                                Downloading classified data (42TB)... <span style="color: #22c55e;">[100%]</span><br>
-                                <span style="color: var(--accent); margin-top: 10px; display: block;">ACCESS GRANTED. WELCOME TO THE MATRIX.</span>`;
-                } else if (command === 'clear') { 
-                    termOutput.innerHTML = ''; 
-                    termInput.disabled = false;
-                    return;
-                }
-                else if (command === 'date') { 
-                    response = `${new Date().toString()}`; 
-                }
-                else if (command === 'sudo' || command === 'root') { 
-                    response = `<span style="color: #ef4444;">[ACCESS DENIED] Nice try. But you are not root here.</span>`; 
-                }
-                else if (command === 'matrix') { 
-                    response = `<span style="color: var(--accent);">Wake up, Neo... (Matrix mode activated for 10s)</span>`;
-                    isMatrix = true;
-                }
-                else { 
-                    response = `<span style="color: #ef4444;">command not found: ${command}</span>`; 
-                }
-
-                // Запускаем эффект печатной машинки
-                typeWriterEffect(response, () => {
-                    termInput.disabled = false;
-                    termInput.focus();
-                    if (isMatrix) {
-                        startMatrixEffect();
-                    }
-                });
-            }
-        });
-
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, particles = [];
-        let isMatrixActive = false;
-        
-        function resizeCanvas() { 
-            width = canvas.width = window.innerWidth; 
-            height = canvas.height = window.innerHeight; 
-        }
-        
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 50; i++) {
-                particles.push({ 
-                    x: Math.random() * width, 
-                    y: Math.random() * height, 
-                    vx: (Math.random() - 0.5) * 0.5, 
-                    vy: (Math.random() - 0.5) * 0.5, 
-                    r: Math.random() * 1.5 + 0.5 
-                });
-            }
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate); 
-            if (isMatrixActive) return; 
-            
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach((p, idx) => {
-                p.x += p.vx; p.y += p.vy;
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
-                
-                ctx.fillStyle = '#94a3b8'; 
-                ctx.beginPath(); 
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); 
-                ctx.fill();
-                
-                for (let j = idx + 1; j < particles.length; j++) {
-                    let p2 = particles[j]; 
-                    let dx = p.x - p2.x; 
-                    let dy = p.y - p2.y; 
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (dist < 150) {
-                        ctx.beginPath(); 
-                        ctx.strokeStyle = `rgba(148, 163, 184, ${0.15 - dist/1000})`; 
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(p.x, p.y); 
-                        ctx.lineTo(p2.x, p2.y); 
-                        ctx.stroke();
-                    }
+                    isPaused = false;
+                    animate();
                 }
             });
-        }
 
-        function startMatrixEffect() {
-            if (isMatrixActive) return;
-            isMatrixActive = true; 
-            ctx.clearRect(0, 0, width, height); 
-            
-            let matrixInterval;
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'.split('');
-            const fontSize = 16;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            
-            for (let x = 0; x < columns; x++) drops[x] = 1;
-            
-            function drawMatrix() {
-                ctx.fillStyle = 'rgba(13, 13, 15, 0.1)'; 
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#94a3b8'; 
-                ctx.font = fontSize + 'px monospace';
-                
-                for (let i = 0; i < drops.length; i++) {
-                    const text = chars[Math.floor(Math.random() * chars.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            
-            matrixInterval = setInterval(drawMatrix, 35);
-            
-            setTimeout(() => {
-                clearInterval(matrixInterval);
-                isMatrixActive = false; 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                initParticles();
-            }, 10000);
-        }
-
-        window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            resizeCanvas(); initParticles(); animate();
-            const el = document.getElementById('header-name');
-            if (el) { const fx = new TextScramble(el); fx.setText(el.innerText); }
+            window.addEventListener('resize', resize);
+            resize();
+            animate();
         });
     </script>
 </body>
